@@ -1,5 +1,3 @@
-from sys import exit
-
 def main():
     """
     URL for challenge: http://adventofcode.com/2017/day/1
@@ -23,10 +21,19 @@ def part1(data):
 
 def part2(data):
     sum_of_numbers = 0
-    print()
+    length = len(data)
+    offset = length/2
+    for i in range(length):
+        digit = int(data[i])
+        index = int((i + offset) % length)
+        next_digit = int(data[index])
+        if digit == next_digit:
+            sum_of_numbers += digit
+
+    print(sum_of_numbers)
 
 def run():
-    chall = int(input("Please enter either 1 or 2 for either challenge"))
+    chall = int(input("Please enter either 1 or 2 for the challenges: "))
     data = main()
     if chall == 1:
         part1(data)
@@ -36,5 +43,4 @@ def run():
         print("You need to enter either 1 or 2")
         exit(1)
 
-main()
-# run()
+run()
