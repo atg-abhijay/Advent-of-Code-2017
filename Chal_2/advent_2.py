@@ -3,6 +3,11 @@ URL for challenge: http://adventofcode.com/2017/day/2
 """
 
 def part1():
+    """
+    find the difference between the
+    maximum and minimum number in each
+    line and add it to checksum
+    """
     f = open("advent_2_input.txt")
     checksum = 0
     for line in f.readlines():
@@ -12,11 +17,19 @@ def part1():
     print(checksum)
 
 def part2():
+    """
+    in each line, find the only two numbers
+    where one completely divides the other.
+    this is the result from that line.
+
+    add up the results from all the lines
+    """
     f = open("advent_2_input.txt")
     sum_of_row_result = 0
     for line in f.readlines():
         int_list = get_list(line)
         length = len(int_list)
+        # get a specific number in the line
         for first_index in range(length-1):
             division_result = check_for_each_num(int_list, first_index)
             if division_result != 0:
@@ -27,6 +40,10 @@ def part2():
     print(int(sum_of_row_result))
 
 def check_for_each_num(int_list, first_index):
+    """
+    check divisibility of number at first_index
+    with all numbers that lie after it in the list
+    """
     length = len(int_list)
     first_num = int_list[first_index]
     division_result = 0
@@ -44,6 +61,10 @@ def check_for_each_num(int_list, first_index):
     return division_result
 
 def get_list(line):
+    """
+    convert tab-separated numbers
+    into a list of integers
+    """
     # remove the ending '\n'
     line = line.rstrip()
     # split the line into a list
