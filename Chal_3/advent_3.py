@@ -139,8 +139,7 @@ def check_neighbours(coordinates):
     return coordinates_value
 
 def run():
-    # chall = int(input("Please enter either 1 or 2 for the challenges: "))
-    chall = 2
+    chall = int(input("Please enter either 1 or 2 for the challenges: "))
     if chall == 1:
         part1()
     elif chall == 2:
