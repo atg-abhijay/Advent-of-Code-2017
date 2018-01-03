@@ -1,5 +1,20 @@
 import math
+
+"""
+URL for challenge: http://adventofcode.com/2017/day/3
+"""
+
 def part1():
+    """
+    The Manhattan Distance would be:
+
+    sum of (l-1), where l is the layer number
+    in which the puzzle input lies,
+    and the deviation of the puzzle input
+    from the closest middle point among the
+    4 middle points of the 4 sides of the layer
+    """
+
     # let counting of layers start from 1
     # i.e. the number '1' is in layer 1
     puzzle_input = 265149
@@ -7,7 +22,7 @@ def part1():
     # puzzle input lies in this layer
     layer = math.ceil(temp)
     # the number of elements in any layer l:
-    # L_num = 8(l-1)
+    # L_num = [2(l+1)-1]^2 - [2l-1]^2 = 8(l-1)
     num_in_layer = 8*(layer-1)
     # last number of any layer l:
     # L_last = (2l-1)^2
@@ -37,6 +52,9 @@ def part1():
             num_steps += deviation
 
     print(int(num_steps))
+
+
+def part2():
 
 
 def run():
