@@ -16,6 +16,8 @@ def part1():
     and the deviation of the puzzle input
     from the closest middle point among the
     4 middle points of the 4 sides of the layer
+
+    completed in constant time
     """
 
     # let counting of layers start from 1
