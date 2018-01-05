@@ -3,16 +3,19 @@ def main():
     input_line = f.readline()
     banks_strings = input_line.split('\t')
     banks = list(map(int, banks_strings))
-    # print(type(banks))
     return banks
 
 def part1(banks):
-    # banks = [0, 2, 7, 0]
+    # banks = [1, 2, 1, 0]
     num_banks = len(banks)
     num_cycles = 0
     # dictionary which keeps track
     # of configurations observed
     configs_observed = {}
+    # adding the first configuration
+    first_banks_tuple = tuple(banks)
+    configs_observed[first_banks_tuple] = True
+
     repeat_obtained = False
     while not repeat_obtained:
         num_cycles += 1
@@ -34,13 +37,15 @@ def part1(banks):
             blocks_to_move -= 1
             banks[pointer] += 1
 
+        # have to use a tuple since a
+        # dictionary cannot have a
+        # mutable object as a key
         banks_tuple = tuple(banks)
         if banks_tuple not in configs_observed:
             configs_observed[banks_tuple] = True
         else:
             repeat_obtained = True
-
-        # print(banks)
+            print(banks)
 
     print(num_cycles)
 
