@@ -1,3 +1,26 @@
+def part1():
+    f = open("advent_5_input.txt")
+    all_numbers_strings = f.readlines()
+    for x in range(len(all_numbers_strings)):
+        all_numbers_strings[x] = all_numbers_strings[x].rstrip()
+
+    all_numbers = list(map(int, all_numbers_strings))
+    length = len(all_numbers)
+
+    num_steps = 0
+    curr_pos = 0 # current position
+    while curr_pos < length:
+        # getting the distance to move
+        dist_to_move = all_numbers[curr_pos]
+        # updating the offset by 1
+        all_numbers[curr_pos] += 1
+        # moving the pointer
+        curr_pos += dist_to_move
+        num_steps += 1
+
+    print(num_steps)
+
+
 def run():
     chall = int(input("Please enter either 1 or 2 for the challenges: "))
     if chall == 1:
@@ -8,4 +31,12 @@ def run():
         print("You need to enter either 1 or 2")
         exit(1)
 
+def test():
+    l = [1, 2, 3, 4, 5, 6]
+    for num in l:
+        num = num+1
+        print(num)
+    print(l)
+
+# test()
 run()
