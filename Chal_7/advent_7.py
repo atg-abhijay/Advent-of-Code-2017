@@ -1,5 +1,4 @@
 from tinydb import TinyDB, Query
-from pprint import pprint
 
 db = TinyDB('db.json')
 program = {'name': '', 'weight': 0, 'parent': '', 'children': []}
@@ -20,11 +19,15 @@ def part1():
     # programs which have children
     parent_progs = db.search(prog_query.children.test(has_children))
     print("Updating children data...")
+    # updating the 'parent' field
+    # of all the children
     for prog in parent_progs:
         children = prog['children']
         for child_name in children:
             db.update({'parent': prog['name']}, prog_query.name == child_name)
 
+    # the bottom program will be the
+    # one whose 'parent' field is empty
     bottom_prog = db.get(prog_query.parent == '')
     print(bottom_prog)
 
@@ -76,24 +79,24 @@ def run():
         exit(1)
 
 def test():
-    # f = open("advent_7_input.txt")
-    # lines = f.readlines()[0:3]
-    # arrow = ' -> '
-    # for line in lines:
-    #     parts = line.strip().split(arrow)
-    #     name_weight = parts[0].split()
-    #     name = name_weight[0]
-    #     weight = name_weight[1][1:-1]
-    #     if arrow in line:
-    #         children = parts[1].split(', ')
-    #         print(name, weight, children)
-    #     else:
-    #         print(name, weight)
+    f = open("advent_7_input.txt")
+    lines = f.readlines()[0:3]
+    arrow = ' -> '
+    for line in lines:
+        parts = line.strip().split(arrow)
+        name_weight = parts[0].split()
+        name = name_weight[0]
+        weight = name_weight[1][1:-1]
+        if arrow in line:
+            children = parts[1].split(', ')
+            print(name, weight, children)
+        else:
+            print(name, weight)
 
-    # db.insert({"name": "John"})
-    # user_query = Query()
-    # result = db.contains(user_query.name == "John")
-    # print(result)
+    db.insert({"name": "John"})
+    user_query = Query()
+    result = db.contains(user_query.name == "John")
+    print(result)
 
     l = [4, 5, 6, 23, 4]
     a, b, c, d, e = l
@@ -105,5 +108,4 @@ def test():
 
 purge()
 build_db()
-# test()
 run()
