@@ -5,11 +5,25 @@ program = {'name': '', 'weight': 0, 'parent': '', 'children': []}
 
 def main():
     f = open("advent_7_input.txt")
+    # each line denotes one program
     for line in f.readlines():
         fields = obtain_parts(line)
-        program['name'] = fields[0]
-        program['weight'] = fields[1]
-        program['children'] = fields[2]
+        name, weight, children = fields
+        program['name'] = name
+        program['weight'] = weight
+        program['children'] = children
+
+        prog_query = Query()
+        prog_exists = db.contains(prog_query.name == name)
+        if not prog_exists:
+            db.insert(program)
+            # if this program has children
+            if children:
+                program['parent'] = name
+                for child in children:
+                    program['name'] = child
+                    db.insert(program)
+
 
 
 def obtain_parts(line):
@@ -21,6 +35,7 @@ def obtain_parts(line):
     name_weight = parts[0].split()
     name = name_weight[0]
     weight = name_weight[1][1:-1]
+    children = []
     if arrow in line:
         children = parts[1].split(', ')
 
@@ -39,19 +54,32 @@ def run():
         exit(1)
 
 def test():
-    f = open("advent_7_input.txt")
-    lines = f.readlines()[0:3]
-    arrow = ' -> '
-    for line in lines:
-        parts = line.strip().split(arrow)
-        name_weight = parts[0].split()
-        name = name_weight[0]
-        weight = name_weight[1][1:-1]
-        if arrow in line:
-            children = parts[1].split(', ')
-            print(name, weight, children)
-        else:
-            print(name, weight)
+    # f = open("advent_7_input.txt")
+    # lines = f.readlines()[0:3]
+    # arrow = ' -> '
+    # for line in lines:
+    #     parts = line.strip().split(arrow)
+    #     name_weight = parts[0].split()
+    #     name = name_weight[0]
+    #     weight = name_weight[1][1:-1]
+    #     if arrow in line:
+    #         children = parts[1].split(', ')
+    #         print(name, weight, children)
+    #     else:
+    #         print(name, weight)
+
+    # db.insert({"name": "John"})
+    # user_query = Query()
+    # result = db.contains(user_query.name == "John")
+    # print(result)
+
+    l = [4, 5, 6, 23, 4]
+    a, b, c, d, e = l
+    print(c, e)
+    if l:
+        print("Yay")
+    else:
+        print("Noo")
 
 test()
 # run()
