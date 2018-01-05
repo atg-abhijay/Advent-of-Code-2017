@@ -1,5 +1,3 @@
-from pprint import pprint
-
 """
 URL for challenge: http://adventofcode.com/2017/day/4
 """
