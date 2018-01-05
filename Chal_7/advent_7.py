@@ -1,4 +1,5 @@
 from tinydb import TinyDB, Query
+from pprint import pprint
 
 db = TinyDB('db.json')
 program = {'name': '', 'weight': 0, 'parent': '', 'children': []}
@@ -9,8 +10,11 @@ def build_db():
     # each line denotes one program
     for line in f.readlines():
         fields = obtain_parts(line)
-        program['name'], program['weight'], program['children'] = fields
+        program['name'] = fields[0]
+        program['weight'] = int(fields[1])
+        program['children'] = fields[2]
         db.insert(program)
+    f.close()
 
 
 def part1():
@@ -65,11 +69,44 @@ def obtain_parts(line):
     fields = [name, weight, children]
     return fields
 
+
 def purge():
     db.purge()
 
+
+def part2():
+    prog_query = Query()
+    # ids_updated = db.update({'bal_wt': 0}, prog_query.children.test(has_children))
+    parent_progs = db.search(prog_query.children.test(has_children))
+    # parent_progs = []
+    # for pid in ids_updated:
+    #     parent_progs.append(db.get(doc_id=pid))
+
+    # pprint(parent_progs)
+    for prog in parent_progs:
+        # pprint(prog)
+        check_prog_children(prog)
+
+def check_prog_children(prog):
+    children = prog['children']
+
+    prog_query = Query()
+    # getting the first child's weight
+    weight = db.get(prog_query.name == children[0])['weight']
+    children_weight = []
+    for child_name in children:
+        obtained_wt = db.get(prog_query.name == child_name)['weight']
+        if obtained_wt != weight:
+            return children
+        children_weight.append(obtained_wt)
+
+    bal_wt = sum(children_weight)
+
+
+
 def run():
-    chall = int(input("Please enter either 1 or 2 for the challenges: "))
+    # chall = int(input("Please enter either 1 or 2 for the challenges: "))
+    chall = 1
     if chall == 1:
         part1()
     elif chall == 2:
@@ -77,6 +114,7 @@ def run():
     else:
         print("You need to enter either 1 or 2")
         exit(1)
+
 
 def test():
     f = open("advent_7_input.txt")
@@ -105,6 +143,7 @@ def test():
         print("Yay")
     else:
         print("Noo")
+
 
 purge()
 build_db()
