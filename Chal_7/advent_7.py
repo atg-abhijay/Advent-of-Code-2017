@@ -1,32 +1,52 @@
 from tinydb import TinyDB, Query
+from pprint import pprint
 
 db = TinyDB('db.json')
 program = {'name': '', 'weight': 0, 'parent': '', 'children': []}
 
-def main():
+def build_db():
     f = open("advent_7_input.txt")
+    print("Building db...")
     # each line denotes one program
     for line in f.readlines():
         fields = obtain_parts(line)
-        name, weight, children = fields
-        program['name'] = name
-        program['weight'] = weight
-        program['children'] = children
+        program['name'], program['weight'], program['children'] = fields
+        db.insert(program)
 
-        prog_query = Query()
-        prog_exists = db.contains(prog_query.name == name)
-        if not prog_exists:
-            db.insert(program)
-            # if this program has children
-            if children:
-                program['parent'] = name
-                for child in children:
-                    program['name'] = child
-                    db.insert(program)
 
+def part1():
+    prog_query = Query()
+    # making a custom query to get those
+    # programs which have children
+    parent_progs = db.search(prog_query.children.test(has_children))
+    print("Updating children data...")
+    for prog in parent_progs:
+        children = prog['children']
+        for child_name in children:
+            db.update({'parent': prog['name']}, prog_query.name == child_name)
+
+    bottom_prog = db.get(prog_query.parent == '')
+    print(bottom_prog)
+
+
+def has_children(children):
+    """
+    used in the custrom query to
+    check if a program has children
+    """
+    # if list is not empty
+    # it returns true
+    if children:
+        return True
+    else:
+        return False
 
 
 def obtain_parts(line):
+    """
+    get the name, weight and
+    children from the line
+    """
     arrow = ' -> '
     # remove '\n' and split
     # the name and weight from
@@ -42,6 +62,8 @@ def obtain_parts(line):
     fields = [name, weight, children]
     return fields
 
+def purge():
+    db.purge()
 
 def run():
     chall = int(input("Please enter either 1 or 2 for the challenges: "))
@@ -81,5 +103,7 @@ def test():
     else:
         print("Noo")
 
-test()
-# run()
+purge()
+build_db()
+# test()
+run()
