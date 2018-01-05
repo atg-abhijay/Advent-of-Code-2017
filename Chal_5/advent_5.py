@@ -6,8 +6,14 @@ def main():
     f = open("advent_5_input.txt")
     all_numbers_strings = f.readlines()
     for x in range(len(all_numbers_strings)):
+        # removing the '\n' from each line to
+        # obtain simply the number
         all_numbers_strings[x] = all_numbers_strings[x].rstrip()
 
+    # the numbers are currently stored as strings
+    # use map() to map each number in the list of
+    # strings to an int and then cast the resulting
+    # map object to a list
     all_numbers = list(map(int, all_numbers_strings))
     f.close()
     return all_numbers
