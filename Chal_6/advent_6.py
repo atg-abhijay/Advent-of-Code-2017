@@ -1,3 +1,7 @@
+"""
+URL for challenge: http://adventofcode.com/2017/day/6
+"""
+
 def main():
     f = open("advent_6_input.txt")
     input_line = f.readline()
