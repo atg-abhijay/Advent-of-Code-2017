@@ -83,37 +83,50 @@ def part2():
     for pid in ids_updated:
         parent_progs.append(db.get(doc_id=pid))
 
+    print("Checking children...")
     for prog in parent_progs:
         result = check_prog_children(prog)
         # if the children's weights are
         # not balanced, print the children
         if not isinstance(result, int):
             if not result[0]:
-                print(result[1])
                 break
 
     children = result[1]
+    print(children)
     children_data = []
     for child_name in children:
         children_data.append(db.get(prog_query.name == child_name))
 
+    # print("all children")
+    # pprint(children_data)
     children_weight = []
     for child in children_data:
         children_weight.append(child['weight'])
 
+    print(children_weight)
     children_weight.sort()
+    outlier = []
     weight_diff = 0
     if children_weight[0] - children_weight[1] == 0:
         weight_diff = children_weight[-1] - children_weight[0]
+        outlier = [weight_diff, children_weight[-1]]
     else:
         weight_diff = children_weight[1] - children_weight[0]
+        outlier = [weight_diff, children_weight[0]]
 
+    for child in children_data:
+        if child['weight'] == outlier[1]:
+            annoying_child = child
+            break
 
+    required_wt = annoying_child['weight'] - annoying_child['bal_wt'] - outlier[0]
+    print(required_wt)
 
 def check_prog_children(prog):
     prog_query = Query()
     db.update({'visited': True}, prog_query.name == prog['name'])
-    pprint(prog)
+    # pprint(prog)
     children = prog['children']
     # if the program doesn't have
     # children, then do nothing
@@ -143,14 +156,14 @@ def check_prog_children(prog):
     bal_wt = sum(children_weight)
     prog_weight = prog['weight']
     db.update({'bal_wt': bal_wt, 'weight': prog_weight + bal_wt}, prog_query.name == prog['name'])
-    print(prog['name'], prog_weight + bal_wt)
-    print()
+    # print(prog['name'], prog_weight + bal_wt)
+    # print()
     return prog_weight + bal_wt
 
 
 def run():
-    # chall = int(input("Please enter either 1 or 2 for the challenges: "))
-    chall = 2
+    chall = int(input("Please enter either 1 or 2 for the challenges: "))
+    # chall = 2
     if chall == 1:
         part1()
     elif chall == 2:
