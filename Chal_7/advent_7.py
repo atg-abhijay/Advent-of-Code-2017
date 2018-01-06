@@ -76,37 +76,81 @@ def purge():
 
 def part2():
     prog_query = Query()
-    # ids_updated = db.update({'bal_wt': 0}, prog_query.children.test(has_children))
-    parent_progs = db.search(prog_query.children.test(has_children))
-    # parent_progs = []
-    # for pid in ids_updated:
-    #     parent_progs.append(db.get(doc_id=pid))
+    db.update({'visited': False})
+    ids_updated = db.update({'bal_wt': 0}, prog_query.children.test(has_children))
+    # parent_progs = db.search(prog_query.children.test(has_children))
+    parent_progs = []
+    for pid in ids_updated:
+        parent_progs.append(db.get(doc_id=pid))
 
-    # pprint(parent_progs)
     for prog in parent_progs:
-        # pprint(prog)
-        check_prog_children(prog)
+        result = check_prog_children(prog)
+        # if the children's weights are
+        # not balanced, print the children
+        if not isinstance(result, int):
+            if not result[0]:
+                print(result[1])
+                break
+
+    children = result[1]
+    children_data = []
+    for child_name in children:
+        children_data.append(db.get(prog_query.name == child_name))
+
+    children_weight = []
+    for child in children_data:
+        children_weight.append(child['weight'])
+
+    children_weight.sort()
+    weight_diff = 0
+    if children_weight[0] - children_weight[1] == 0:
+        weight_diff = children_weight[-1] - children_weight[0]
+    else:
+        weight_diff = children_weight[1] - children_weight[0]
+
+
 
 def check_prog_children(prog):
-    children = prog['children']
-
     prog_query = Query()
+    db.update({'visited': True}, prog_query.name == prog['name'])
+    pprint(prog)
+    children = prog['children']
+    # if the program doesn't have
+    # children, then do nothing
+    if not children:
+        return prog['weight']
+
     # getting the first child's weight
-    weight = db.get(prog_query.name == children[0])['weight']
-    children_weight = []
-    for child_name in children:
-        obtained_wt = db.get(prog_query.name == child_name)['weight']
+    first_child = db.get(prog_query.name == children[0])
+    if first_child['visited']:
+        weight = first_child['weight']
+    else:
+        weight = check_prog_children(first_child)
+
+    children_weight = [weight]
+    for child_name in children[1:]:
+        child = db.get(prog_query.name == child_name)
+        if child['visited']:
+            obtained_wt = child['weight']
+        else:
+            obtained_wt = check_prog_children(child)
+
         if obtained_wt != weight:
-            return children
+            return (False, children)
+
         children_weight.append(obtained_wt)
 
     bal_wt = sum(children_weight)
-
+    prog_weight = prog['weight']
+    db.update({'bal_wt': bal_wt, 'weight': prog_weight + bal_wt}, prog_query.name == prog['name'])
+    print(prog['name'], prog_weight + bal_wt)
+    print()
+    return prog_weight + bal_wt
 
 
 def run():
     # chall = int(input("Please enter either 1 or 2 for the challenges: "))
-    chall = 1
+    chall = 2
     if chall == 1:
         part1()
     elif chall == 2:
@@ -117,34 +161,41 @@ def run():
 
 
 def test():
-    f = open("advent_7_input.txt")
-    lines = f.readlines()[0:3]
-    arrow = ' -> '
-    for line in lines:
-        parts = line.strip().split(arrow)
-        name_weight = parts[0].split()
-        name = name_weight[0]
-        weight = name_weight[1][1:-1]
-        if arrow in line:
-            children = parts[1].split(', ')
-            print(name, weight, children)
-        else:
-            print(name, weight)
+    # f = open("advent_7_input.txt")
+    # lines = f.readlines()[0:3]
+    # arrow = ' -> '
+    # for line in lines:
+    #     parts = line.strip().split(arrow)
+    #     name_weight = parts[0].split()
+    #     name = name_weight[0]
+    #     weight = name_weight[1][1:-1]
+    #     if arrow in line:
+    #         children = parts[1].split(', ')
+    #         print(name, weight, children)
+    #     else:
+    #         print(name, weight)
 
-    db.insert({"name": "John"})
-    user_query = Query()
-    result = db.contains(user_query.name == "John")
-    print(result)
+    # db.insert({"name": "John"})
+    # user_query = Query()
+    # result = db.contains(user_query.name == "John")
+    # print(result)
 
-    l = [4, 5, 6, 23, 4]
-    a, b, c, d, e = l
-    print(c, e)
-    if l:
-        print("Yay")
+    # l = [4, 5, 6, 23, 4]
+    # a, b, c, d, e = l
+    # print(c, e)
+    # if l:
+    #     print("Yay")
+    # else:
+    #     print("Noo")
+
+    x = 5
+    print(type(x))
+    if isinstance(x, int):
+        print("yay")
     else:
-        print("Noo")
-
+        print("noo")
 
 purge()
 build_db()
 run()
+# test()
