@@ -122,9 +122,6 @@ def part2():
     # sorting the weight list for the
     # computation below
     children_weight.sort()
-    # outlier child's weight data
-    # outlier = 0
-    # weight_diff = 0
     if children_weight[0] - children_weight[1] == 0:
         # this is for the case when the different weight
         # is larger. e.g. [3,3,3,3,4]
@@ -133,14 +130,12 @@ def part2():
         # that the different weight must be at the end of the list
         weight_diff = children_weight[-1] - children_weight[0]
         outlier = children_weight[-1]
-        # outlier = [weight_diff, children_weight[-1]]
+
     else:
         # this case would be when the different weight is
-        # smaller. therefore, weight_diff will be any higher
-        # index weight minus the weight at 0th index
+        # smaller. e.g. [4,5,5,5,5,5]
         weight_diff = children_weight[1] - children_weight[0]
         outlier = children_weight[0]
-        # outlier = [weight_diff, children_weight[0]]
 
     # we find the child which
     # had the different weight
@@ -285,6 +280,6 @@ def test():
     else:
         print("noo")
 
-# purge()
-# build_db()
+purge()
+build_db()
 run()
