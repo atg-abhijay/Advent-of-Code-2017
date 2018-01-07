@@ -1,5 +1,5 @@
-from tinydb import TinyDB, Query
 from pprint import pprint
+from tinydb import TinyDB, Query
 
 db = TinyDB('db.json')
 program = {'name': '', 'weight': 0, 'parent': '', 'children': []}
@@ -43,10 +43,7 @@ def has_children(children):
     """
     # if list is not empty
     # it returns true
-    if children:
-        return True
-    else:
-        return False
+    return bool(children)
 
 
 def obtain_parts(line):
@@ -75,10 +72,24 @@ def purge():
 
 
 def part2():
+    # making a query object
     prog_query = Query()
+    # updating each of the 'programs'
+    # with a field 'visited', set
+    # to False in the beginning
     db.update({'visited': False})
+    # adding another field 'bal_wt' (balancing
+    # weight) to all the programs which have
+    # children. this will hold the value of
+    # the combined weight of the children
+    #
+    # after making the updates, a list of
+    # affected ids is returned
     ids_updated = db.update({'bal_wt': 0}, prog_query.children.test(has_children))
-    # parent_progs = db.search(prog_query.children.test(has_children))
+    # parent_progs is a list of all
+    # the parent programs. we use the
+    # ids returned above to get the
+    # parent programs from the db
     parent_progs = []
     for pid in ids_updated:
         parent_progs.append(db.get(doc_id=pid))
@@ -86,50 +97,83 @@ def part2():
     print("Checking children...")
     for prog in parent_progs:
         result = check_prog_children(prog)
-        # if the children's weights are
-        # not balanced, print the children
+        # if the result is not an int, then it must
+        # be a list. as soon as we get this, we can
+        # break the loop since there is only one incorrect
+        # weight and we need not look further
         if not isinstance(result, int):
             if not result[0]:
                 break
 
+    # only stores the children's names
     children = result[1]
-    print(children)
+    # stores all the data of the children
     children_data = []
     for child_name in children:
         children_data.append(db.get(prog_query.name == child_name))
 
-    # print("all children")
-    # pprint(children_data)
     children_weight = []
     for child in children_data:
         children_weight.append(child['weight'])
 
-    print(children_weight)
+    # sorting the weight list for the
+    # computation below
     children_weight.sort()
-    outlier = []
-    weight_diff = 0
+    # outlier child's weight data
+    # outlier = 0
+    # weight_diff = 0
     if children_weight[0] - children_weight[1] == 0:
+        # this is for the case when the different weight
+        # is larger. e.g. [3,3,3,3,4]
+        # since the difference of the first two weights is
+        # zero, that means they are the same and that implies
+        # that the different weight must be at the end of the list
         weight_diff = children_weight[-1] - children_weight[0]
-        outlier = [weight_diff, children_weight[-1]]
+        outlier = children_weight[-1]
+        # outlier = [weight_diff, children_weight[-1]]
     else:
+        # this case would be when the different weight is
+        # smaller. therefore, weight_diff will be any higher
+        # index weight minus the weight at 0th index
         weight_diff = children_weight[1] - children_weight[0]
-        outlier = [weight_diff, children_weight[0]]
+        outlier = children_weight[0]
+        # outlier = [weight_diff, children_weight[0]]
 
+    # we find the child which
+    # had the different weight
     for child in children_data:
-        if child['weight'] == outlier[1]:
-            annoying_child = child
+        if child['weight'] == outlier:
+            different_child = child
             break
 
-    required_wt = annoying_child['weight'] - annoying_child['bal_wt'] - outlier[0]
-    print(annoying_child['name'], required_wt)
+    # the weight that the different child should have is
+    # its weight minus the weight of its children (bal_wt)
+    # minus the weight_diff which was obtained above
+    required_wt = different_child['weight'] - different_child['bal_wt'] - weight_diff
+    print(different_child['name'], required_wt)
 
 def check_prog_children(prog):
+    """
+    for each program, check
+    the weight of its children. if
+    their weights are imbalanced,
+    then those are the children we
+    are interested in
+
+    1. children's weights are balanced -
+            int showing their combined weight
+            returned
+    2. children's weights are not balanced -
+            list returned: 'False' and list
+            of children
+    """
     prog_query = Query()
+    # updating the visit status of
+    # current program to True
     db.update({'visited': True}, prog_query.name == prog['name'])
-    # pprint(prog)
     children = prog['children']
-    # if the program doesn't have
-    # children, then do nothing
+    # if the program doesn't have children,
+    # then just return its own weight
     if not children:
         return prog['weight']
 
@@ -212,7 +256,7 @@ def test():
     else:
         print("noo")
 
-purge()
-build_db()
+# purge()
+# build_db()
 run()
 # test()
