@@ -68,6 +68,9 @@ def obtain_parts(line):
 
 
 def purge():
+    """
+    erase everything in the database
+    """
     db.purge()
 
 
@@ -182,31 +185,53 @@ def check_prog_children(prog):
     if first_child['visited']:
         weight = first_child['weight']
     else:
+        # if the child has not been visited yet,
+        # recursively call the method on the child
         weight = check_prog_children(first_child)
+        # if the return value is not an int(the weight),
+        # then it must be the list of children where the
+        # weights are off. return this value
+        #
+        # ********* IMPORTANT ***********
+        # the next two lines are important since without
+        # these, while returning from the statement
+        #   'return (False, children)'
+        # the list is lost as we return from the recursive
+        # calls. the list of children gets modified and the
+        # parents are returned instead of the children
         if not isinstance(weight, int):
             return weight
 
+    # list to keep track of weights
     children_weight = [weight]
     for child_name in children[1:]:
         child = db.get(prog_query.name == child_name)
         if child['visited']:
             obtained_wt = child['weight']
         else:
+            # same logic as for first child
             obtained_wt = check_prog_children(child)
             if not isinstance(obtained_wt, int):
                 return obtained_wt
 
+        # ******* KEY PART *********
+        # if the weights don't match up, then this
+        # is what we are looking for. we return the
+        # current list of children
         if obtained_wt != weight:
             return (False, children)
 
+        # if the weights are fine, append
+        # them to the list
         children_weight.append(obtained_wt)
 
     bal_wt = sum(children_weight)
     prog_weight = prog['weight']
+    # for the program, update the weight it is
+    # balancing as the sum of its children's weights
+    # and its own weight increases by the balanced weight
     db.update({'bal_wt': bal_wt, 'weight': prog_weight + bal_wt}, prog_query.name == prog['name'])
-    # print(db.get(prog_query.name == prog['name']))
-    # print(prog['name'], prog_weight + bal_wt)
-    # print()
+    # return the program's new weight
     return prog_weight + bal_wt
 
 
@@ -222,32 +247,36 @@ def run():
 
 
 def test():
-    # f = open("advent_7_input.txt")
-    # lines = f.readlines()[0:3]
-    # arrow = ' -> '
-    # for line in lines:
-    #     parts = line.strip().split(arrow)
-    #     name_weight = parts[0].split()
-    #     name = name_weight[0]
-    #     weight = name_weight[1][1:-1]
-    #     if arrow in line:
-    #         children = parts[1].split(', ')
-    #         print(name, weight, children)
-    #     else:
-    #         print(name, weight)
+    """
+    method to test out ideas
+    and practice stuff
+    """
+    f = open("advent_7_input.txt")
+    lines = f.readlines()[0:3]
+    arrow = ' -> '
+    for line in lines:
+        parts = line.strip().split(arrow)
+        name_weight = parts[0].split()
+        name = name_weight[0]
+        weight = name_weight[1][1:-1]
+        if arrow in line:
+            children = parts[1].split(', ')
+            print(name, weight, children)
+        else:
+            print(name, weight)
 
-    # db.insert({"name": "John"})
-    # user_query = Query()
-    # result = db.contains(user_query.name == "John")
-    # print(result)
+    db.insert({"name": "John"})
+    user_query = Query()
+    result = db.contains(user_query.name == "John")
+    print(result)
 
-    # l = [4, 5, 6, 23, 4]
-    # a, b, c, d, e = l
-    # print(c, e)
-    # if l:
-    #     print("Yay")
-    # else:
-    #     print("Noo")
+    l = [4, 5, 6, 23, 4]
+    a, b, c, d, e = l
+    print(c, e)
+    if l:
+        print("Yay")
+    else:
+        print("Noo")
 
     x = 5
     print(type(x))
@@ -259,4 +288,3 @@ def test():
 # purge()
 # build_db()
 run()
-# test()
