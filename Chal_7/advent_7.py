@@ -1,11 +1,11 @@
 from tinydb import TinyDB, Query
 from pprint import pprint
 
-db = TinyDB('/Users/AbhijayGupta/Projects/Advent_of_Code_2017/Chal_7/db.json')
+db = TinyDB('db.json')
 program = {'name': '', 'weight': 0, 'parent': '', 'children': []}
 
 def build_db():
-    f = open("/Users/AbhijayGupta/Projects/Advent_of_Code_2017/Chal_7/advent_7_input.txt")
+    f = open("advent_7_input.txt")
     print("Building db...")
     # each line denotes one program
     for line in f.readlines():
