@@ -1,11 +1,11 @@
 from tinydb import TinyDB, Query
 from pprint import pprint
 
-db = TinyDB('db.json')
+db = TinyDB('/Users/AbhijayGupta/Projects/Advent_of_Code_2017/Chal_7/db.json')
 program = {'name': '', 'weight': 0, 'parent': '', 'children': []}
 
 def build_db():
-    f = open("advent_7_input.txt")
+    f = open("/Users/AbhijayGupta/Projects/Advent_of_Code_2017/Chal_7/advent_7_input.txt")
     print("Building db...")
     # each line denotes one program
     for line in f.readlines():
@@ -121,7 +121,7 @@ def part2():
             break
 
     required_wt = annoying_child['weight'] - annoying_child['bal_wt'] - outlier[0]
-    print(required_wt)
+    print(annoying_child['name'], required_wt)
 
 def check_prog_children(prog):
     prog_query = Query()
@@ -139,6 +139,8 @@ def check_prog_children(prog):
         weight = first_child['weight']
     else:
         weight = check_prog_children(first_child)
+        if not isinstance(weight, int):
+            return weight
 
     children_weight = [weight]
     for child_name in children[1:]:
@@ -147,6 +149,8 @@ def check_prog_children(prog):
             obtained_wt = child['weight']
         else:
             obtained_wt = check_prog_children(child)
+            if not isinstance(obtained_wt, int):
+                return obtained_wt
 
         if obtained_wt != weight:
             return (False, children)
@@ -156,6 +160,7 @@ def check_prog_children(prog):
     bal_wt = sum(children_weight)
     prog_weight = prog['weight']
     db.update({'bal_wt': bal_wt, 'weight': prog_weight + bal_wt}, prog_query.name == prog['name'])
+    # print(db.get(prog_query.name == prog['name']))
     # print(prog['name'], prog_weight + bal_wt)
     # print()
     return prog_weight + bal_wt
@@ -163,7 +168,6 @@ def check_prog_children(prog):
 
 def run():
     chall = int(input("Please enter either 1 or 2 for the challenges: "))
-    # chall = 2
     if chall == 1:
         part1()
     elif chall == 2:
