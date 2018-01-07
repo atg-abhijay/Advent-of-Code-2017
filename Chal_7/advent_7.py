@@ -1,4 +1,3 @@
-from pprint import pprint
 from tinydb import TinyDB, Query
 
 db = TinyDB('db.json')
