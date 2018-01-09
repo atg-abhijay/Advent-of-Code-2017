@@ -1,3 +1,7 @@
+"""
+URL for challenge: http://adventofcode.com/2017/day/7
+"""
+
 from tinydb import TinyDB, Query
 
 db = TinyDB('db.json')
