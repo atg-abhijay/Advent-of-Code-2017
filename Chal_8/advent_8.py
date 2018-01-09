@@ -4,10 +4,10 @@ URL for challenge: http://adventofcode.com/2017/day/8
 from tinydb import TinyDB, Query
 from tinydb.operations import add, subtract
 
-db = TinyDB('/Users/AbhijayGupta/Projects/Advent_of_Code_2017/Chal_8/registers.json')
+db = TinyDB('registers.json')
 
 def main():
-    f = open("/Users/AbhijayGupta/Projects/Advent_of_Code_2017/Chal_8/advent_8_input.txt")
+    f = open("advent_8_input.txt")
     register = {}
     print("Building db...")
     for line in f.readlines():
