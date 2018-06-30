@@ -3,7 +3,6 @@ URL for challenge: https://adventofcode.com/2017/day/9
 """
 def part1():
     chall_input = open("advent_9_input.txt").read()
-    # chall_input = '{{<!!>},{<!!>},{<!!>},{<!!>}}'
     score = 0
     gp_open = 0
     to_check = True
