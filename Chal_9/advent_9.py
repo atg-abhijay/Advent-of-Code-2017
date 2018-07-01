@@ -46,20 +46,29 @@ def part1():
 
 
 def part2():
+    # using readlines() instead of read() to test all test
+    # cases at once, which are present on different lines
     chall_input = open("advent_9_input.txt").readlines()
     for l in chall_input:
+        # strip the line of the newline character
         line = l.strip()
+        # stores the answer
         valid_gbg = 0
         inside_gbg = False
         prev_char = ''
         for char in line:
+            # skip the current iteration if the previous
+            # character was a '!'
             if prev_char == '!':
                 prev_char = ''
                 continue
+            # we are at the beginning of garbage
             elif char == '<' and not inside_gbg:
                 inside_gbg = True
+            # we are at the end of garbage
             elif char == '>':
                 inside_gbg = False
+            # this also takes care of '<' WITHIN the garbage
             elif inside_gbg and char != '!':
                 valid_gbg += 1
             prev_char = char
