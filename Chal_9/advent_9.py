@@ -46,11 +46,31 @@ def part1():
 
 
 def part2():
-    pass
+    chall_input = open("advent_9_input.txt").readlines()
+    for l in chall_input:
+        line = l.strip()
+        valid_gbg = 0
+        inside_gbg = False
+        prev_char = ''
+        for char in line:
+            if prev_char == '!':
+                prev_char = ''
+                continue
+            elif char == '<' and not inside_gbg:
+                inside_gbg = True
+            elif char == '>':
+                inside_gbg = False
+            elif inside_gbg and char != '!':
+                valid_gbg += 1
+            prev_char = char
+
+        # print(line, "- Total valid garbage:", valid_gbg)
+        print("Total valid garbage:", valid_gbg)
+
 
 def run():
     # chall = int(input("Please enter either 1 or 2 for the challenges: "))
-    chall = 1
+    chall = 2
     if chall == 1:
         part1()
     elif chall == 2:
