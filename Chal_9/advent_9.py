@@ -47,6 +47,7 @@ def part1():
                 to_check = True
             prev_char = char
 
+        # Uncomment the next line for test cases
         # print(line, "- Total score:", score)
         print("Total score:", score)
 
@@ -76,6 +77,7 @@ def part2():
                 valid_gbg += 1
             prev_char = char
 
+        # Uncomment the next line for test cases
         # print(line, "- Total valid garbage:", valid_gbg)
         print("Total valid garbage:", valid_gbg)
 
