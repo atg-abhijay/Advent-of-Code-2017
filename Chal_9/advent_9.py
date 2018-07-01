@@ -81,8 +81,7 @@ def part2():
 
 
 def run():
-    # chall = int(input("Please enter either 1 or 2 for the challenges: "))
-    chall = 1
+    chall = int(input("Please enter either 1 or 2 for the challenges: "))
     if chall == 1:
         part1()
     elif chall == 2:
