@@ -14,6 +14,9 @@ def main():
     return lengths
 
 
+# have to pass other parameters as well since those
+# are needed for part 2. for solely solving part 1,
+# we only need the lengths
 def part1(circ_list, lengths, current_pos, skip_size):
     len_circ = len(circ_list)
     for length in lengths:
@@ -49,21 +52,25 @@ def part1(circ_list, lengths, current_pos, skip_size):
     d['result'] = result
     return d
 
+
 def part2():
     f = open("advent_10_input.txt")
     suffix_list = [17, 31, 73, 47, 23]
     char_list = list(f.readline())
     lengths = []
+    # convert each character into its ASCII code
     for char in char_list:
         lengths.append(ord(char))
 
     lengths += suffix_list
-    # print(lengths)
     circ_list = [x for x in range(256)]
     current_pos = 0
     skip_size = 0
+    # have to perform 64 rounds
     for i in range(64):
         dic_obj = part1(circ_list, lengths, current_pos, skip_size)
+        # the list, current_pos and skip_size are
+        # to be preserved over the diff. iterations
         circ_list = dic_obj['circ_list']
         current_pos = dic_obj['current_pos']
         skip_size = dic_obj['skip_size']
@@ -73,14 +80,21 @@ def part2():
     for i in range(16):
         position = 16*i
         partial_result = 0
+        # after taking XOR with 16 numbers, we
+        # get the 'complete' partial_result. we
+        # append that to the dense_hash
         for j in range(16):
             partial_result = partial_result ^ circ_list[position+j]
         dense_hash.append(partial_result)
 
     hex_list = []
     for num in dense_hash:
+        # get the last two digits after
+        # converting int to hex
         temp = hex(num)[-2:]
         hex_digits = ''
+        # we need a leading zero if an
+        # 'x' is present
         if temp[0] == 'x':
             hex_digits = '0' + temp[1]
         else:
@@ -88,7 +102,10 @@ def part2():
 
         hex_list.append(hex_digits)
 
+    # efficient way of making a string rather than
+    # repeatedly concatenating to a single string
     print(''.join(hex_list))
+
 
 def run():
     chall = int(input("Please enter either 1 or 2 for the challenges: "))
