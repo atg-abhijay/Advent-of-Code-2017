@@ -14,12 +14,8 @@ def main():
     return lengths
 
 
-def part1(lengths):
-    circ_list = [x for x in range(256)]
+def part1(circ_list, lengths, current_pos, skip_size):
     len_circ = len(circ_list)
-    # print(circ_list)
-    current_pos = 0
-    skip_size = 0
     for length in lengths:
         list_slice = []
         reverse_slice = []
@@ -45,22 +41,66 @@ def part1(lengths):
         skip_size += 1
 
     result = circ_list[0] * circ_list[1]
-    # print(circ_list)
-    print(result)
-
+    # need the dictionary object for part 2
+    d = dict()
+    d['circ_list'] = circ_list
+    d['current_pos'] = current_pos
+    d['skip_size'] = skip_size
+    d['result'] = result
+    return d
 
 def part2():
-    pass
+    f = open("advent_10_input.txt")
+    suffix_list = [17, 31, 73, 47, 23]
+    char_list = list(f.readline())
+    lengths = []
+    for char in char_list:
+        lengths.append(ord(char))
+
+    lengths += suffix_list
+    # print(lengths)
+    circ_list = [x for x in range(256)]
+    current_pos = 0
+    skip_size = 0
+    for i in range(64):
+        dic_obj = part1(circ_list, lengths, current_pos, skip_size)
+        circ_list = dic_obj['circ_list']
+        current_pos = dic_obj['current_pos']
+        skip_size = dic_obj['skip_size']
+
+    dense_hash = []
+    position = 0
+    for i in range(16):
+        position = 16*i
+        partial_result = 0
+        for j in range(16):
+            partial_result = partial_result ^ circ_list[position+j]
+        dense_hash.append(partial_result)
+
+    hex_list = []
+    for num in dense_hash:
+        temp = hex(num)[-2:]
+        hex_digits = ''
+        if temp[0] == 'x':
+            hex_digits = '0' + temp[1]
+        else:
+            hex_digits = temp
+
+        hex_list.append(hex_digits)
+
+    print(''.join(hex_list))
 
 def run():
     chall = int(input("Please enter either 1 or 2 for the challenges: "))
-    lengths = main()
     if chall == 1:
-        part1(lengths)
+        lengths = main()
+        circ_list = [x for x in range(256)]
+        d = part1(circ_list, lengths, 0, 0)
+        print(d['result'])
     elif chall == 2:
         part2()
     else:
-        print("You need to enter either 1 or 2")
+        print("\nYou need to enter either 1 or 2")
         exit(1)
 
 
@@ -73,12 +113,23 @@ def test():
     # for i in range(1,6):
     #     print(i)
 
-    x = 5
-    y = 6
-    var = 34
-    var += (x + y)
-    var = var % 16
-    print(var)
+    # x = 5
+    # y = 6
+    # var = 34
+    # var += (x + y)
+    # var = var % 16
+    # print(var)
+
+    # p = 7
+    # answer = hex(p)
+    # answer = answer[-2:]
+    # if answer[0] != 0:
+    #     answer[0] = 0
+    # print(answer)
+
+    output = '3efbe78a8d82f29979031a4aa0b16a9d'
+    answer = '3efbe78a8d82f29979031a4aa0b16a9d'
+    print(output == answer)
 
 # test()
 # main()
