@@ -6,61 +6,61 @@ def main():
     f = open("advent_11_input.txt")
     data = f.readline()
     commands = data.split(',')
-    # north is opposite to south
-    # north-east is oppposite to south-west
-    # north-west is oppposite to south-east
-    # therefore only one variable needed for
-    # each of the pairs.
-    num_times = {'n': 0, 'ne': 0, 'nw': 0}
+    """
+    Consider the 6 directions as 6 vectors -
+    v1 = i + j   (ne)    v4 = -i -j  (sw)
+    v2 = 2j      (n)     v5 = i - j  (se)
+    v3 = -i + j  (nw)    v6 = -2j    (s)
+
+    v1 <-> v4, v2 <-> v6, v3 <-> v5
+    They are inverses of each other. Therefore
+    we can just use one of each of them. Also,
+    v3 = v2 - v1. So, there are only 2 independent
+    vectors here, v1 (ne) and v2 (n).
+
+    If v were any vector in this hexagonal space, it
+    can be expressed as -
+            v = k1v1 + k2v2 + ... + k6v6
+    for constants k1, k2, ... k6.
+    Using the independence fact above,
+            v = v1(k1 - k3 - k4 + k5) + v2 (k2 + k3 - k5 - k6)
+
+    Constants and direction relation -
+        k1 -> ne    k4 -> sw
+        k2 -> n     k5 -> se
+        k3 -> nw    k6 -> s
+
+    """
+    num_times = {'k1': 0, 'k2': 0, 'k3': 0, 'k4': 0, 'k5': 0, 'k6': 0}
     for command in commands:
         if command == 'n':
-            num_times['n'] += 1
+            num_times['k2'] += 1
         elif command == 'ne':
-            num_times['ne'] += 1
+            num_times['k1'] += 1
         elif command == 'nw':
-            num_times['nw'] += 1
+            num_times['k3'] += 1
         elif command == 's':
-            num_times['n'] -= 1
+            num_times['k6'] += 1
         elif command == 'sw':
-            num_times['ne'] -= 1
+            num_times['k4'] += 1
         elif command == 'se':
-            num_times['nw'] -= 1
+            num_times['k5'] += 1
 
     return num_times
 
 
 def part1(num_times):
-    # using variables for ease of writing code
-    n = num_times['n']
-    ne = num_times['ne']
-    nw = num_times['nw']
-    # if ne and nw are both positive
-    # or both negative, then their values
-    # combine to contribute to north
+    """
+    The position vector v at any time can be
+    given by -
+        v = v1(k1 - k3 - k4 + k5) + v2 (k2 + k3 - k5 - k6)
 
-    # if one of them is positive and the other
-    # is negative, then we can leave the values
-    # as is because there exists three unique
-    # directions of movement in the grid
-    if ne*nw > 0:
-        if abs(ne) < abs(nw):
-            n += ne
-            nw -= ne
-            ne = 0
-        else:
-            n += nw
-            ne -= nw
-            nw = 0
-
-        num_times['n'] = n
-        num_times['ne'] = ne
-        num_times['nw'] = nw
-
-    # irrespective of being positive or negative,
-    # the sum of the absolute values of the steps
-    # in the three directions is the total no. of steps
-    total_steps = abs(n)+abs(ne)+abs(nw)
-    print(num_times)
+    Since v1 and v2 are independent vectors, the
+    least number of steps required to get to v
+    will be the sum of the coefficients of v1 and v2
+        Sum = k1 + k2 - k4 - k6
+    """
+    total_steps = num_times['k1'] + num_times['k2'] - num_times['k4'] - num_times['k6']
     print("Total steps required:", total_steps)
 
 def part2():
