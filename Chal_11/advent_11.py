@@ -64,7 +64,35 @@ def part1(num_times):
     print("Total steps required:", total_steps)
 
 def part2():
-    pass
+    """
+    Cannot use result from main method here since
+    we have to be inside the loop to keep track of the sum.
+    Therefore, we will have some code repetition.
+
+    The number of steps required at any point in time is the sum
+    of the coefficients of v1 and v2 -
+            Sum = k1 + k2 - k4 - k6
+    We have to check for the maximum value attained by this sum.
+    """
+    max_sum = 0; k1 = 0; k2 = 0; k4 = 0; k6 = 0
+    f = open("advent_11_input.txt")
+    data = f.readline()
+    commands = data.split(',')
+    for command in commands:
+        if command == 'n':
+            k2 += 1
+        elif command == 'ne':
+            k1 += 1
+        elif command == 's':
+            k6 += 1
+        elif command == 'sw':
+            k4 += 1
+
+        temp_sum = k1 + k2 - k4 - k6
+        if temp_sum > max_sum:
+            max_sum = temp_sum
+
+    print("Farthest away:", max_sum)
 
 
 def run():
