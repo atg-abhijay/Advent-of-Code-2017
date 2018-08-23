@@ -54,11 +54,15 @@ def part2():
         status = evaluate_cond(register)
         if status:
             amount = register['amount']
+            # value = register['value']
             if register['command'] == 'inc':
+                # new_value = value + amount
                 db.update(add('value', amount), reg_query.name == register['name'])
             else:
+                # new_value = value - amount
                 db.update(subtract('value', amount), reg_query.name == register['name'])
 
+            # db.update({'value': new_value}, reg_query.name == register['name'])
             new_value = db.get(reg_query.name == register['name'])['value']
             print(new_value)
             if all_time_max < new_value:
