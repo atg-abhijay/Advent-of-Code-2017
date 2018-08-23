@@ -2,13 +2,9 @@
 URL for challenge: https://adventofcode.com/2017/day/12
 """
 
-from tinydb import TinyDB, Query
-
-db = TinyDB('db.json')
-
 def main():
     f = open("/Users/AbhijayGupta/Projects/Advent_of_Code_2017/Chal_12/advent_12_input.txt")
-    prog = {'prog': 0, 'conns': set(), 'visited': False}
+    programs = {}
     for l in f.readlines():
         line = l.replace(' ', '').strip().split('<->')
         prog_no = int(line[0])
@@ -16,33 +12,48 @@ def main():
         # the numbers are stored as strings in the list
         # so we map them to integers and convert the
         # map object to a list
+        details = {}
         conns = list(map(int, connections))
-        prog['prog'] = prog_no
-        prog['conns'] = conns
-        db.insert(prog)
+        details["conns"] = conns
+        details["visited"] = False
+        programs[prog_no] = details
+
+    # print(programs)
+    return programs
 
 
-def part1():
+def part1(programs):
     group_progid_0 = {0}
-    query_obj = Query()
-    prog0 = db.get(query_obj.prog == 0)
+    prog0 = programs[0]
     group_progid_0.update(prog0['conns'])
-    db.update({'visited': True}, query_obj.prog == 0)
-    group_progid_0 = find_progs(db.all(), group_progid_0)
+    programs[0]['visited'] = True
+    group_progid_0 = find_progs(programs.keys(), programs, group_progid_0)
     print(group_progid_0)
     print(len(group_progid_0))
 
-def find_progs(progs, group_progid_0):
-    query_obj = Query()
-    for prog in progs:
-        if not prog['visited']:
-            do_intersect = bool(group_progid_0.intersection(prog['conns']))
+
+def find_progs(keys, progs, group_progid_0):
+    # for prog in progs.values():
+    #     if not prog['visited']:
+    #         do_intersect = bool(group_progid_0.intersection(prog['conns']))
+    #         if do_intersect:
+    #             group_progid_0.add(prog['prog'])
+    #             db.update({'visited': True}, query_obj.prog == prog['prog'])
+    #             for conn in prog['conns']:
+    #                 conn = db.get(query_obj.prog == conn)
+    #                 find_progs([conn], group_progid_0)
+
+    # return group_progid_0
+
+    for key in keys:
+        details = progs[key]
+        if not details['visited']:
+            do_intersect = bool(group_progid_0.intersection(set(details['conns'])))
             if do_intersect:
-                group_progid_0.add(prog['prog'])
-                db.update({'visited': True}, query_obj.prog == prog['prog'])
-                for conn in prog['conns']:
-                    conn = db.get(query_obj.prog == conn)
-                    find_progs([conn], group_progid_0)
+                group_progid_0.add(key)
+                progs[key]['visited'] = True
+                for conn in details['conns']:
+                    find_progs([conn], progs, group_progid_0)
 
     return group_progid_0
 
@@ -68,8 +79,9 @@ def find_progs(progs, group_progid_0):
 def run():
     # chall = int(input("Please enter either 1 or 2 for the challenges: "))
     chall = 1
+    programs = main()
     if chall == 1:
-        part1()
+        part1(programs)
     elif chall == 2:
         part2()
     else:
@@ -93,6 +105,6 @@ def test():
     print(db.all())
 
 # test()
-purge_db()
-main()
+# purge_db()
+# main()
 run()
