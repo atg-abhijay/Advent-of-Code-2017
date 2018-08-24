@@ -66,14 +66,52 @@ def find_progs(keys, progs, group_progid_0):
     return group_progid_0
 
 
+def part2(programs):
+    grp_count = 1
+    grp_1 = []
+    for i in range(len(programs)): # enumerate
+        prog = programs[i]
+        visited = prog['visited']
+        if not visited:
+            programs[i]['visited'] = True
+            programs[i]['grp_no'] = grp_count
+            for conn in prog['conns']:
+                programs[conn]['grp_no'] = grp_count
+                programs[conn]['visited'] = True
+            grp_count += 1
+        else:
+            pr_grp_no = prog['grp_no']
+            if pr_grp_no == 1:
+                grp_1.append(i)
+            for conn in prog['conns']:
+                programs[conn]['grp_no'] = pr_grp_no
+                programs[conn]['visited'] = True
+
+    print("yay")
+    print(grp_count)
+
+    # for i in range(1, grp_count+1):
+        # progs_i = []
+        # for j in range(len(programs)):
+        #     if programs[j]['grp_no'] == i:
+        #         progs_i.append(j)
+        # print("Group", i, ':', progs_i)
+
+    # grp_1 = []
+    # for i in range(len(programs)):
+    #     if programs[i]['grp_no'] == 1:
+    #         grp_1.append(i)
+
+    print("Group 1:", grp_1)
+
 def run():
     # chall = int(input("Please enter either 1 or 2 for the challenges: "))
-    chall = 1
+    chall = 2
     programs = main()
     if chall == 1:
         part1(programs)
     elif chall == 2:
-        part2()
+        part2(programs)
     else:
         print("You need to enter either 1 or 2")
         exit(1)
