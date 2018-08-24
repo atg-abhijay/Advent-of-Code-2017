@@ -67,28 +67,28 @@ def find_progs(keys, progs, group_progid_0):
 
 
 def part2(programs):
-    grp_count = 1
-    grp_1 = []
-    for i in range(len(programs)): # enumerate
-        prog = programs[i]
-        visited = prog['visited']
-        if not visited:
-            programs[i]['visited'] = True
-            programs[i]['grp_no'] = grp_count
-            for conn in prog['conns']:
-                programs[conn]['grp_no'] = grp_count
-                programs[conn]['visited'] = True
-            grp_count += 1
-        else:
-            pr_grp_no = prog['grp_no']
-            if pr_grp_no == 1:
-                grp_1.append(i)
-            for conn in prog['conns']:
-                programs[conn]['grp_no'] = pr_grp_no
-                programs[conn]['visited'] = True
+    # grp_count = 1
+    # grp_1 = []
+    # for i in range(len(programs)): # enumerate
+    #     prog = programs[i]
+    #     visited = prog['visited']
+    #     if not visited:
+    #         programs[i]['visited'] = True
+    #         programs[i]['grp_no'] = grp_count
+    #         for conn in prog['conns']:
+    #             programs[conn]['grp_no'] = grp_count
+    #             programs[conn]['visited'] = True
+    #         grp_count += 1
+    #     else:
+    #         pr_grp_no = prog['grp_no']
+    #         if pr_grp_no == 1:
+    #             grp_1.append(i)
+    #         for conn in prog['conns']:
+    #             programs[conn]['grp_no'] = pr_grp_no
+    #             programs[conn]['visited'] = True
 
-    print("yay")
-    print(grp_count)
+    # print("yay")
+    # print(grp_count)
 
     # for i in range(1, grp_count+1):
         # progs_i = []
@@ -102,7 +102,30 @@ def part2(programs):
     #     if programs[i]['grp_no'] == 1:
     #         grp_1.append(i)
 
-    print("Group 1:", grp_1)
+    # print("Group 1:", grp_1)
+    grp_count = make_groups(programs.keys(), programs, 0)
+    print(grp_count)
+
+
+def make_groups(keys, programs, grp_count):
+    for key in keys:
+        prog = programs[key]
+        if not prog['visited']:
+            programs[key]['visited'] = True
+            if 'grp_no' not in prog:
+                grp_count += 1
+                programs[key]['grp_no'] = grp_count
+                for conn in prog['conns']:
+                    programs[conn]['grp_no'] = grp_count
+                    make_groups([conn], programs, grp_count)
+            else:
+                pg_grp_no = prog['grp_no']
+                for conn in prog['conns']:
+                    if 'grp_no' not in programs[conn]:
+                        programs[conn]['grp_no'] = pg_grp_no
+                        make_groups([conn], programs, grp_count)
+
+    return grp_count
 
 def run():
     # chall = int(input("Please enter either 1 or 2 for the challenges: "))
