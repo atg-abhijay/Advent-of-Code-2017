@@ -67,42 +67,9 @@ def find_progs(keys, progs, group_progid_0):
 
 
 def part2(programs):
-    # grp_count = 1
-    # grp_1 = []
-    # for i in range(len(programs)): # enumerate
-    #     prog = programs[i]
-    #     visited = prog['visited']
-    #     if not visited:
-    #         programs[i]['visited'] = True
-    #         programs[i]['grp_no'] = grp_count
-    #         for conn in prog['conns']:
-    #             programs[conn]['grp_no'] = grp_count
-    #             programs[conn]['visited'] = True
-    #         grp_count += 1
-    #     else:
-    #         pr_grp_no = prog['grp_no']
-    #         if pr_grp_no == 1:
-    #             grp_1.append(i)
-    #         for conn in prog['conns']:
-    #             programs[conn]['grp_no'] = pr_grp_no
-    #             programs[conn]['visited'] = True
-
-    # print("yay")
-    # print(grp_count)
-
-    # for i in range(1, grp_count+1):
-        # progs_i = []
-        # for j in range(len(programs)):
-        #     if programs[j]['grp_no'] == i:
-        #         progs_i.append(j)
-        # print("Group", i, ':', progs_i)
-
-    # grp_1 = []
-    # for i in range(len(programs)):
-    #     if programs[i]['grp_no'] == 1:
-    #         grp_1.append(i)
-
-    # print("Group 1:", grp_1)
+    # calling the recursive method 'make_groups'
+    # with the programs' keys, the programs
+    # and an initial group count of zero
     grp_count = make_groups(programs.keys(), programs, 0)
     print(grp_count)
 
@@ -110,14 +77,35 @@ def part2(programs):
 def make_groups(keys, programs, grp_count):
     for key in keys:
         prog = programs[key]
+        # if the program has not been visited,
+        # then we have something to do. if it
+        # has already been visited then everything
+        # is handled since the method is recursive
         if not prog['visited']:
+            # update the program to be visited
             programs[key]['visited'] = True
+            # if the program does not
+            # contain a field called 'grp_no',
+            # then it is to be given a new
+            # group no. the same group no. is
+            # given to its connections. the method
+            # is then called recursively on the
+            # connections.
             if 'grp_no' not in prog:
                 grp_count += 1
                 programs[key]['grp_no'] = grp_count
                 for conn in prog['conns']:
                     programs[conn]['grp_no'] = grp_count
+                    # same as before. have to put 'conn' in
+                    # a list since 'keys' has to be an iterable
                     make_groups([conn], programs, grp_count)
+            # if the program already contains
+            # a field for group no., then we
+            # simply have to assign that no.
+            # to the connections. connections
+            # which already have the field don't
+            # need to have it reassigned so we
+            # save time by not modifying them.
             else:
                 pg_grp_no = prog['grp_no']
                 for conn in prog['conns']:
