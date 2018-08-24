@@ -71,7 +71,7 @@ def part2(programs):
     # with the programs' keys, the programs
     # and an initial group count of zero
     grp_count = make_groups(programs.keys(), programs, 0)
-    print(grp_count)
+    print("Total number of groups:", grp_count)
 
 
 def make_groups(keys, programs, grp_count):
@@ -116,8 +116,7 @@ def make_groups(keys, programs, grp_count):
     return grp_count
 
 def run():
-    # chall = int(input("Please enter either 1 or 2 for the challenges: "))
-    chall = 2
+    chall = int(input("Please enter either 1 or 2 for the challenges: "))
     programs = main()
     if chall == 1:
         part1(programs)
